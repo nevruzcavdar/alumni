@@ -38,36 +38,58 @@ The **Alumni Management System** is an end-to-end web platform designed to bridg
 
 ---
 
-## 📋 2. Week 1 Deliverables & Contract
+## 📋 2. Weekly Deliverables & Milestones
 
-As defined in the **Week 1** milestone ("Bring a machine you can work on, pick your stack in the first session without agonising over it, and commit something every single week"):
-
-| Deliverable | Status | Details |
-| :--- | :---: | :--- |
-| **Mail & Classroom** | ✅ Completed | Communication channels established and verified |
-| **Language & Database** | ✅ Completed | Python (FastAPI) + SQLite (Dev) / PostgreSQL (Prod) |
-| **AI Assistant** | ✅ Completed | Antigravity IDE (Google DeepMind) |
-| **Alumni Repository** | ✅ Completed | Initialized at [`nevruzcavdar/alumni`](https://github.com/nevruzcavdar/alumni) |
-| **System Definition & Run Guide**| ✅ Completed | Detailed documentation and runnable baseline in this `README.md` |
+| Milestone | Deliverables | Status | Details |
+| :--- | :--- | :---: | :--- |
+| **Week 1** | Mail & Classroom, Stack Setup, Baseline Routes | ✅ Completed | Python (FastAPI), SQLite/PostgreSQL, Antigravity IDE baseline |
+| **Week 2** | **CRUD on `/api/users` + Swagger UI at `/api/swagger`** | ✅ Completed | Full User CRUD lifecycle, SQLite persistence with SQLAlchemy, interactive Swagger UI documentation |
 
 ---
 
 ## 🛠️ 3. Technology Stack
 
 * **Programming Language:** Python 3.11+ (Fast, modern, type-hinted)
-* **Backend Framework:** [FastAPI](https://fastapi.tiangolo.com/) (High performance, automatic OpenAPI/Swagger documentation, asynchronous)
+* **Backend Framework:** [FastAPI](https://fastapi.tiangolo.com/) (High performance, OpenAPI 3.1, asynchronous)
 * **Database:**
-  * **Development:** SQLite (Zero-configuration, lightweight local database)
+  * **Development:** SQLite (`alumni.db` - lightweight local database)
   * **Production:** PostgreSQL (Robust relational database with ACID compliance)
-* **ORM & Migrations:** SQLAlchemy 2.0+ & Alembic
+* **ORM:** SQLAlchemy 2.0+
 * **Data Validation:** Pydantic v2
+* **API Documentation:** Swagger UI (hosted at `/api/swagger`)
+* **Testing:** Pytest & FastAPI TestClient (HTTPX)
 * **AI Coding Assistant:** [Antigravity IDE](https://deepmind.google/) (Google DeepMind)
 
 ---
 
-## 🚀 4. How to Run the System
+## 🌐 4. API Endpoints
 
-Follow these instructions to clone, set up, and run the project locally on your machine.
+### 📖 Interactive Documentation
+* **Swagger UI:** [http://127.0.0.1:8000/api/swagger](http://127.0.0.1:8000/api/swagger)
+* **ReDoc:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+* **OpenAPI Schema:** [http://127.0.0.1:8000/api/openapi.json](http://127.0.0.1:8000/api/openapi.json)
+
+### 👥 Users Resource (`/api/users`)
+| Method | Endpoint | Description | Status Code |
+| :--- | :--- | :--- | :---: |
+| `POST` | `/api/users` | Register a new user (alumni, student, faculty, admin) | `201 Created` |
+| `GET` | `/api/users` | List users with pagination (`skip`, `limit`) and filters (`role`, `search`) | `200 OK` |
+| `GET` | `/api/users/{id}` | Retrieve specific user by ID | `200 OK` |
+| `PUT` | `/api/users/{id}` | Update existing user details | `200 OK` |
+| `DELETE` | `/api/users/{id}` | Delete user account | `200 OK` |
+
+### 🔍 Utility & Health Endpoints
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Root status endpoint with project metadata and route links |
+| `GET` | `/health` | Liveness health probe |
+| `GET` | `/about` | Project overview & author information |
+| `GET` | `/hello` | Greeting demo endpoint |
+| `GET` | `/sum/{a}/{b}` | Calculation demo endpoint |
+
+---
+
+## 🚀 5. How to Run the System
 
 ### Prerequisites
 
@@ -111,56 +133,69 @@ pip install -r requirements.txt
 
 ### Step 4: Configure Environment Variables
 
-Copy the example environment configuration:
+```powershell
+# Windows
+Copy-Item .env.example .env
 
-* **On Windows (PowerShell):**
-  ```powershell
-  Copy-Item .env.example .env
-  ```
-
-* **On macOS / Linux:**
-  ```bash
-  cp .env.example .env
-  ```
+# macOS / Linux
+cp .env.example .env
+```
 
 ---
 
 ### Step 5: Start the Development Server
 
-Launch the FastAPI application with live reload:
-
 ```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Once running, access the services in your browser:
-
+Once running, navigate to:
+* **Interactive Swagger Documentation:** [http://127.0.0.1:8000/api/swagger](http://127.0.0.1:8000/api/swagger)
+* **Users API Endpoint:** [http://127.0.0.1:8000/api/users](http://127.0.0.1:8000/api/users)
 * **API Root:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-* **Interactive Swagger Documentation:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-* **Alternative ReDoc Documentation:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-* **Health Check:** [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
 ---
 
-## 📁 5. Project Structure
+### Step 6: Run Automated Tests
 
-```text
-alumni/
-├── .env.example          # Template for environment configuration
-├── .gitignore             # Standard git ignore rules for Python & venv
-├── README.md              # Project documentation and setup guide
-├── requirements.txt       # Project dependencies
-└── app/
-    ├── __init__.py        # Package initialization
-    └── main.py            # FastAPI entry point & API route handlers
+Execute the unit and integration test suite:
+
+```bash
+pytest -v
 ```
 
 ---
 
-## 🔄 6. Development Workflow & Commit Cadence
+## 📁 6. Project Structure
+
+```text
+alumni/
+├── .env.example          # Template for environment configuration
+├── .gitignore             # Standard git ignore rules (includes *.db, venv)
+├── README.md              # Project documentation, API specs, and run guide
+├── requirements.txt       # Project dependencies (FastAPI, SQLAlchemy, Pydantic, etc.)
+├── pytest.ini             # Test runner configuration
+├── tests/
+│   ├── __init__.py
+│   └── test_users.py      # Automated tests for CRUD and Swagger UI
+└── app/
+    ├── __init__.py        # Package initialization
+    ├── main.py            # FastAPI entry point & app configuration
+    ├── database.py        # SQLAlchemy engine, session maker & DB dependency
+    ├── models.py          # SQLAlchemy User entity model
+    ├── schemas.py         # Pydantic v2 schemas for User CRUD
+    ├── crud.py            # Reusable database CRUD operations
+    └── routers/
+        ├── __init__.py
+        └── users.py       # API route handlers for /api/users
+```
+
+---
+
+## 🔄 7. Development Workflow & Commit Cadence
 
 This project adheres strictly to continuous incremental progress:
-1. Every task is developed on feature branches or committed regularly to `main`.
+1. Every feature is structured into modular layers (`models`, `schemas`, `crud`, `routers`).
 2. Weekly commitments reflect iterative enhancements: domain models, database migrations, authentication, alumni directory, mentorship workflows, and UI integrations.
 
 ---

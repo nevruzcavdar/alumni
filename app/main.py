@@ -1,15 +1,32 @@
 """
 Alumni Management System - Core API Entry Point
-Week 1 - Basic Routes Implementation
+CRUD on /api/users + Swagger UI at /api/swagger
 """
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+
+from app.database import Base, engine
+from app.routers import users
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create DB tables automatically on startup
+    Base.metadata.create_all(bind=engine)
+    yield
+
 
 app = FastAPI(
     title="Alumni Management System API",
     description="Backend API service for managing alumni network, profiles, mentorship, and career opportunities.",
-    version="0.1.0",
+    version="0.2.0",
+    docs_url="/api/swagger",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+    lifespan=lifespan,
 )
 
 # Enable CORS for local development
@@ -21,6 +38,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register Routers
+app.include_router(users.router)
+
+
+@app.get("/docs", include_in_schema=False)
+def redirect_to_custom_swagger():
+    """Redirect standard /docs to /api/swagger."""
+    return RedirectResponse(url="/api/swagger")
+
 
 @app.get("/")
 def root():
@@ -28,10 +54,11 @@ def root():
     return {
         "message": "Welcome to the Alumni Management System API",
         "project": "Alumni Management System",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "status": "operational",
-        "docs_url": "/docs",
-        "milestone": "Week 1 - Basic Routes",
+        "docs_url": "/api/swagger",
+        "users_api": "/api/users",
+        "milestone": "CRUD on /api/users + Swagger UI at /api/swagger",
     }
 
 
@@ -64,15 +91,16 @@ def about():
         "project": "Alumni Management System",
         "description": "A modern web platform connecting graduates, students, and institutions for lifelong engagement and mentorship.",
         "author": "Nevruz Çavdar",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "routes": [
             "/",
+            "/api/swagger",
+            "/api/users",
             "/hello",
             "/hello/{name}",
             "/sum/{a}/{b}",
             "/about",
             "/health",
-            "/docs",
         ],
     }
 
